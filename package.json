@@ -1,0 +1,41 @@
+{
+  "name": "hubot-trivia-game",
+  "description": "yet another trivia bot for Hubot",
+  "version": "1.0.0",
+  "author": "Michael Yin <mikeyin@mikeyin.org>",
+  "license": "MIT",
+
+  "keywords": [
+    "hubot",
+    "hubot-scripts",
+    "trivia",
+    "game"
+  ],
+
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yincrash/hubot-trivia-game.git"
+  },
+
+  "bugs": {
+    "url": "https://github.com/yincrash/hubot-trivia-game/issues"
+  },
+
+  "dependencies": {
+    "coffee-script": "~1.6",
+    "cheerio": "0.17.0"
+  },
+
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*",
+    "sinon-chai": "*",
+    "sinon": "*"
+  },
+
+  "main": "index.coffee",
+
+  "scripts": {
+    "test": "script/test"
+  }
+}
