@@ -11,7 +11,11 @@ A trivia bot.
 
 ## Installation
 
-TBA
+* In your hubot installation's path:
+* `npm install hubot-trivia-game --save`
+* edit `external-scripts.json` and add `hubot-trivia-game` to the JSON array.
+* if the file doesn't exist, create it with `["hubot-trivia-game"]`
+* add a `questions.json` file to `res/` folder which you may also need to create
 
 ### Question DB
 
