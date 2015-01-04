@@ -40,6 +40,7 @@ class Game
       index = Math.floor(Math.random() * @questions.length)
       @currentQ = @questions[index]
       robot.logger.debug "Answer is #{@currentQ.answer}"
+      # remove optional portions of answer that are in parens
       @currentQ.validAnswer = @currentQ.answer.replace /\(.*\)/, ""
 
     $question = Cheerio.load ("<span>" + @currentQ.question + "</span>")
@@ -60,7 +61,10 @@ class Game
   
   answerQuestion: (resp, guess) ->
     if @currentQ
-      if guess.toLowerCase().indexOf(@currentQ.validAnswer.toLowerCase()) >= 0
+      # remove all punctuation and spaces, and see if the answer is in the guess.
+      checkGuess = guess.toLowerCase().replace /[\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
+      checkAnswer = @currentQ.validAnswer.toLowerCase().replace /[\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
+      if checkGuess.indexOf(checkAnswer) >= 0
         resp.reply "YOU ARE CORRECT!!1!!!111!! The answer is #{@currentQ.answer}"
         name = resp.envelope.user.name.toLowerCase().trim()
         value = @currentQ.value.replace /[^0-9.-]+/g, ""
