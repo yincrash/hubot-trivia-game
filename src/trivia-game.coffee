@@ -33,13 +33,13 @@ class Game
   constructor: (@robot) ->
     buffer = Fs.readFileSync(Path.resolve('./res', 'questions.json'))
     @questions = JSON.parse buffer
-    robot.logger.debug "Initiated trivia game script."
+    @robot.logger.debug "Initiated trivia game script."
   
   askQuestion: (resp) ->
     unless @currentQ # set current question
       index = Math.floor(Math.random() * @questions.length)
       @currentQ = @questions[index]
-      robot.logger.debug "Answer is #{@currentQ.answer}"
+      @robot.logger.debug "Answer is #{@currentQ.answer}"
       # remove optional portions of answer that are in parens
       @currentQ.validAnswer = @currentQ.answer.replace /\(.*\)/, ""
 
@@ -68,7 +68,7 @@ class Game
         resp.reply "YOU ARE CORRECT!!1!!!111!! The answer is #{@currentQ.answer}"
         name = resp.envelope.user.name.toLowerCase().trim()
         value = @currentQ.value.replace /[^0-9.-]+/g, ""
-        robot.logger.debug "#{name} answered correctly."
+        @robot.logger.debug "#{name} answered correctly."
         user = resp.envelope.user
         user.triviaScore = user.triviaScore or 0
         user.triviaScore += parseInt value
