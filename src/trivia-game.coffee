@@ -61,9 +61,13 @@ class Game
   
   answerQuestion: (resp, guess) ->
     if @currentQ
+      checkGuess = guess.toLowerCase()
+      # remove html entities (slack's adapter sends & as &amp; now)
+      checkGuess = checkGuess.replace /&.{0,}?;/, ""
       # remove all punctuation and spaces, and see if the answer is in the guess.
-      checkGuess = guess.toLowerCase().replace /[\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
-      checkAnswer = @currentQ.validAnswer.toLowerCase().replace /[\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
+      checkGuess = checkGuess.replace /[\\'"\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
+      checkAnswer = @currentQ.validAnswer.toLowerCase().replace /[\\'"\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
+      checkAnswer = checkAnswer.replace /^(a(n?)|the)/g, ""
       if checkGuess.indexOf(checkAnswer) >= 0
         resp.reply "YOU ARE CORRECT!!1!!!111!! The answer is #{@currentQ.answer}"
         name = resp.envelope.user.name.toLowerCase().trim()
