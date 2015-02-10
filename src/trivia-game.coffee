@@ -17,7 +17,9 @@
 #   !trivia - ask a question
 #   !skip - skip the current question
 #   !answer <answer> or !a <answer> - provide an answer
+#   !hint or !h - take a hint
 #   !score <player> - check the score of the player
+#   !scores or !score all - check the score of all players
 #
 # Author:
 #   yincrash
@@ -29,16 +31,18 @@ Cheerio = require 'cheerio'
 
 class Game
   @currentQ = null
+  @hintLength = null
 
   constructor: (@robot) ->
     buffer = Fs.readFileSync(Path.resolve('./res', 'questions.json'))
     @questions = JSON.parse buffer
     @robot.logger.debug "Initiated trivia game script."
-  
+
   askQuestion: (resp) ->
     unless @currentQ # set current question
       index = Math.floor(Math.random() * @questions.length)
       @currentQ = @questions[index]
+      @hintLength = 1
       @robot.logger.debug "Answer is #{@currentQ.answer}"
       # remove optional portions of answer that are in parens
       @currentQ.validAnswer = @currentQ.answer.replace /\(.*\)/, ""
@@ -55,10 +59,11 @@ class Game
     if @currentQ
       resp.send "The answer is #{@currentQ.answer}."
       @currentQ = null
+      @hintLength = null
       @askQuestion(resp)
     else
       resp.send "There is no active question!"
-  
+
   answerQuestion: (resp, guess) ->
     if @currentQ
       checkGuess = guess.toLowerCase()
@@ -79,18 +84,34 @@ class Game
         resp.reply "Score: #{user.triviaScore}"
         @robot.brain.save()
         @currentQ = null
+        @hintLength = null
       else
         resp.send "#{guess} is incorrect."
     else
       resp.send "There is no active question!"
 
-  checkScore: (resp, name) ->
-    user = @robot.brain.userForName name
-    unless user
-      resp.send "There is no score for #{name}"
+  hint: (resp) ->
+    if @currentQ
+      answer = @currentQ.validAnswer
+      hint = answer.substr(0,@hintLength) + answer.substr(@hintLength,(answer.length + @hintLength)).replace(/./g, ".")
+      if @hintLength <= answer.length
+        @hintLength += 1
+      resp.send hint
     else
-      user.triviaScore = user.triviaScore or 0
-      resp.send "#{user.name} - $#{user.triviaScore}"
+      resp.send "There is no active question!"
+
+  checkScore: (resp, name) ->
+    if name == "all"
+      for user in @robot.brain.usersForFuzzyName ""
+        user.triviaScore = user.triviaScore or 0
+        resp.send "#{user.name} - $#{user.triviaScore}"
+    else
+      user = @robot.brain.userForName name
+      unless user
+        resp.send "There is no score for #{name}"
+      else
+        user.triviaScore = user.triviaScore or 0
+        resp.send "#{user.name} - $#{user.triviaScore}"
 
 
 module.exports = (robot) ->
@@ -103,6 +124,12 @@ module.exports = (robot) ->
 
   robot.hear /^!a(nswer)? (.*)/, (resp) ->
     game.answerQuestion(resp, resp.match[2])
-  
+
   robot.hear /^!score (.*)/i, (resp) ->
     game.checkScore(resp, resp.match[1].toLowerCase().trim())
+
+  robot.hear /^!scores/i, (resp) ->
+    game.checkScore(resp, "all")
+
+  robot.hear /^!h(int)?/, (resp) ->
+    game.hint(resp)
