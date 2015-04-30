@@ -26,8 +26,6 @@ Fs = require 'fs'
 Path = require 'path'
 Cheerio = require 'cheerio'
 Entities = require 'entities'
-Underscore = require 'underscore'
-Clark = require("clark").clark
 
 class ScoreKeeper
   constructor: (@robot) ->
@@ -141,13 +139,7 @@ class Game
     for i in [0..tops.length-1]
       op.push("#{i+1}. #{tops[i].name} : #{tops[i].score}")
 
-    if topOrBottom == "top"
-      graphSize = Math.min(tops.length, Math.min(amount, 20))
-      tops = (item.score for item in tops)
-      firstTops = tops.slice(0, graphSize)
-      op.splice(0, 0, Clark(firstTops))
-
-    resp.send message.join("\n")
+    resp.send op.join("\n")
 
 module.exports = (robot) ->
   scoreKeeper = new ScoreKeeper(robot)
