@@ -33,7 +33,7 @@ class ScoreKeeper
     @cache =
       scores: {}
 
-    @robot.brain.on 'loaded', =>
+    @robot.brain.on "loaded", =>
       @robot.brain.data.scores ||= {}
 
       @cache.scores = @robot.brain.data.scores
@@ -44,14 +44,14 @@ class ScoreKeeper
 
   saveUser: (user) ->
     @robot.brain.data.scores[user] = @cache.scores[user]
-    @robot.brain.emit('save', @robot.brain.data)
+    @robot.brain.emit("save", @robot.brain.data)
 
     @cache.scores[user]
 
   add: (user, value) ->
     user = @getUser(user)
     @cache.scores[user] += value
-    @saveUser(user, from)
+    @saveUser(user)
 
   scoreForUser: (user) -> 
     user = @getUser(user)
@@ -117,7 +117,7 @@ class Game
         value = @currentQ.value.replace /[^0-9.-]+/g, ""
         @robot.logger.debug "#{name} answered correctly."
 
-        value = parseInt value, 10
+        value = parseInt value
         newScore = @scoreKeeper.add(name, value)
         if newScore? then msg.send "#{name} has #{newScore} points."
 
@@ -128,12 +128,12 @@ class Game
       resp.send "There is no active question!"
 
   checkScore: (resp, name) ->
-    score = scoreKeeper.scoreForUser(name)
+    score = @scoreKeeper.scoreForUser(name)
     resp.send "#{name} has #{score} points."
 
   leaderBoard: (resp, topOrBottom, amount) ->
     op = []
-    tops = scoreKeeper[topOrBottom](amount)
+    tops = @scoreKeeper[topOrBottom](amount)
 
     for i in [0..tops.length-1]
       op.push("#{i+1}. #{tops[i].name} : #{tops[i].score}")
