@@ -35,7 +35,6 @@ class ScoreKeeper
 
     @robot.brain.on 'loaded', =>
       @robot.brain.data.scores ||= {}
-      @robot.brain.data.scoreLog ||= {}
 
       @cache.scores = @robot.brain.data.scores
 
