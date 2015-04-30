@@ -26,6 +26,7 @@ Fs = require 'fs'
 Path = require 'path'
 Cheerio = require 'cheerio'
 Entities = require 'entities'
+Underscore = require 'underscore'
 Clark = require("clark").clark
 
 class ScoreKeeper
@@ -118,8 +119,9 @@ class Game
         @robot.logger.debug "#{name} answered correctly."
 
         value = parseInt value
-        newScore = @scoreKeeper.add(name, value)
-        if newScore? then msg.send "#{name} has #{newScore} points."
+        user = resp.envelope.user.mention_name.toLowerCase().trim()
+        newScore = @scoreKeeper.add(user, value)
+        if newScore? then resp.send "#{user} has #{newScore} points."
 
         @currentQ = null
       else
@@ -128,6 +130,7 @@ class Game
       resp.send "There is no active question!"
 
   checkScore: (resp, name) ->
+    name = name.toLowerCase().trim()
     score = @scoreKeeper.scoreForUser(name)
     resp.send "#{name} has #{score} points."
 
@@ -138,9 +141,11 @@ class Game
     for i in [0..tops.length-1]
       op.push("#{i+1}. #{tops[i].name} : #{tops[i].score}")
 
-    if msg.match[1] == "top"
+    if topOrBottom == "top"
       graphSize = Math.min(tops.length, Math.min(amount, 20))
-      op.splice(0, 0, Clark(_.first(_.pluck(tops, "score"), graphSize)))
+      tops = (item.score for item in tops)
+      firstTops = tops.slice(0, graphSize)
+      op.splice(0, 0, Clark(firstTops))
 
     resp.send message.join("\n")
 
@@ -158,8 +163,9 @@ module.exports = (robot) ->
     game.answerQuestion(resp, resp.match[2])
   
   robot.hear /^!score (.*)/i, (resp) ->
-    game.checkScore(resp, resp.match[1].toLowerCase().trim())
+    game.checkScore(resp, resp.match[1])
 
-  robot.hear /!t (top|bottom) (\d+)/i, (msg) ->
-    amount = parseInt(msg.match[2])
-    game.leaderBoard(resp, msg.match[1], amount)
+  robot.hear /!t (top|bottom)( \d+)?/i, (resp) ->
+    amount = parseInt(resp.match[2])
+    amount = if amount? amount else 10
+    game.leaderBoard(resp, resp.match[1], amount)
