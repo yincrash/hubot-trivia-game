@@ -134,12 +134,14 @@ class Game
 
   hint: (resp) ->
     if @currentQ
+      # Get answer
+      answer = @currentQ.validAnswer
+
       # Check if the hintLength is greater than answerLength/2
       if @hintLength > answer.length/2
         resp.send "You have run out of hints for the active question" 
         return
 
-      answer = @currentQ.validAnswer
       hint = answer.substr(0,@hintLength) + answer.substr(@hintLength,(answer.length + @hintLength)).replace(/./g, ".")
 
       if @hintLength <= answer.length
