@@ -28,4 +28,4 @@ The question database is a file containing a JSON array of questions with the fo
   "value": "$400"
 },
 ```
-Extract the `data/jeopardy_questions.json.gz` and store it in `<hubot_root>/res/questions.json`
+Extract the `data/jeopardy_questions.json.gz` and store it in `<hubot_root>/res/questions.json` (Tip: You can also store a minor subset of Qs)
