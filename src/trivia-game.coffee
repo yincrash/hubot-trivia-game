@@ -145,7 +145,7 @@ class Game
       if @hintLength <= answer.length
         @hintLength += 1
 
-      resp.send hint
+      resp.send "Hint = #{hint}"
     else
       resp.send "There is no active question!"    
 
