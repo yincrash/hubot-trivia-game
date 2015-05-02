@@ -14,14 +14,15 @@
 #   None
 #
 # Commands:
-#   !trivia - ask a question
+#   !trivia or !t - ask a question
 #   !skip - skip the current question
 #   !answer <answer> or !a <answer> - provide an answer
 #   !score <player> - check the score of the player
-#   !hint - hints for trivia question
+#   !hint or !h - hints for trivia question
+#   !t top or !t bottom - trivia scoreboard
 #
 # Author:
-#   yincrash
+#   yincrash, ravikiranj
 
 Fs = require 'fs'
 Path = require 'path'
@@ -115,15 +116,27 @@ class Game
       checkAnswer = checkAnswer.replace /^(a(n?)|the)/g, ""
 
       if checkGuess.indexOf(checkAnswer) >= 0
-        resp.reply "YOU ARE CORRECT!!! The answer is #{@currentQ.answer}"
         name = resp.envelope.user.name.toLowerCase().trim()
         value = @currentQ.value.replace /[^0-9.-]+/g, ""
-        @robot.logger.debug "#{name} answered correctly."
-
         value = parseInt value
+
+        # Compute score as ((answerLength - hintLength)/answerLength) * value
+        answerLength = @currentQ.validAnswer.length
+        if @hintLength? and @hintLength > 1
+            rawAdjustedValue = Math.floor(((answerLength - @hintLength) / answerLength) * value)
+            # Round to nearest 100
+            adjustedValue = Math.floor(rawAdjustedValue/100)*100
+        else
+            adjustedValue = value
+
+        resp.reply "YOU ARE CORRECT!!! The answer is #{@currentQ.answer}, you scored #{adjustedValue} points."
+        @robot.logger.debug "#{name} answered correctly."
+        if adjustedValue != value
+            resp.send "Hints Used = #{@hintLength}, original points = #{value}, adjusted points = #{adjustedValue}"
+
         user = resp.envelope.user.mention_name.toLowerCase().trim()
-        newScore = @scoreKeeper.add(user, value)
-        if newScore? then resp.send "#{user} has #{newScore} points."
+        newScore = @scoreKeeper.add(user, adjustedValue)
+        if newScore? then resp.send "#{user} has a total of #{newScore} points."
 
         @currentQ = null
         @hintLength = null
@@ -156,8 +169,9 @@ class Game
     score = @scoreKeeper.scoreForUser(name)
     resp.send "#{name} has #{score} points."
 
-  leaderBoard: (resp, topOrBottom, amount) ->
+  leaderBoard: (resp, topOrBottom) ->
     op = []
+    amount = 10
     tops = @scoreKeeper[topOrBottom](amount)
 
     for i in [0..tops.length-1]
@@ -169,7 +183,7 @@ module.exports = (robot) ->
   scoreKeeper = new ScoreKeeper(robot)
   game = new Game(robot, scoreKeeper)
 
-  robot.hear /^!trivia/, (resp) ->
+  robot.hear /^!t(rivia)?$/, (resp) ->
     game.askQuestion(resp)
 
   robot.hear /^!skip/, (resp) ->
@@ -181,9 +195,8 @@ module.exports = (robot) ->
   robot.hear /^!score (.*)/i, (resp) ->
     game.checkScore(resp, resp.match[1])
 
-  robot.hear /!t (top|bottom)( \d+)?/i, (resp) ->
-    amount = parseInt(resp.match[2])
-    game.leaderBoard(resp, resp.match[1], amount)
+  robot.hear /^!t (top|bottom)/i, (resp) ->
+    game.leaderBoard(resp, resp.match[1])
 
-  robot.hear /^!hint/i, (resp) ->
+  robot.hear /^!h(int)?/i, (resp) ->
     game.hint(resp)
