@@ -123,7 +123,7 @@ class Game
         # Compute score as ((answerLength - hintLength)/answerLength) * value
         answerLength = @currentQ.validAnswer.length
         if @hintLength? and @hintLength > 1
-            rawAdjustedValue = Math.floor(((answerLength - @hintLength) / answerLength) * value)
+            rawAdjustedValue = Math.floor(((answerLength - @hintLength - 1) / answerLength) * value)
             # Round to nearest 100
             adjustedValue = Math.floor(rawAdjustedValue/100)*100
         else
@@ -132,7 +132,7 @@ class Game
         resp.reply "YOU ARE CORRECT!!! The answer is #{@currentQ.answer}, you scored #{adjustedValue} points."
         @robot.logger.debug "#{name} answered correctly."
         if adjustedValue != value
-            resp.send "Hints Used = #{@hintLength}, original points = #{value}, adjusted points = #{adjustedValue}"
+            resp.send "Hints Used = #{@hintLength-1}, original points = #{value}, adjusted points = #{adjustedValue}"
 
         user = resp.envelope.user.mention_name.toLowerCase().trim()
         newScore = @scoreKeeper.add(user, adjustedValue)
