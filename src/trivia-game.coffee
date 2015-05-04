@@ -123,9 +123,9 @@ class Game
         # Compute score as ((answerLength - hintLength)/answerLength) * value
         answerLength = @currentQ.validAnswer.length
         if @hintLength? and @hintLength > 1
-            rawAdjustedValue = Math.floor(((answerLength - @hintLength - 1) / answerLength) * value)
+            rawAdjustedValue = Math.ceil(((answerLength - @hintLength - 1) / answerLength) * value)
             # Round to nearest 100
-            adjustedValue = Math.floor(rawAdjustedValue/100)*100
+            adjustedValue = Math.ceil(rawAdjustedValue/100)*100
         else
             adjustedValue = value
 
