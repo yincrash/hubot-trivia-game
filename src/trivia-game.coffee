@@ -186,7 +186,7 @@ module.exports = (robot) ->
   robot.hear /^!t(rivia)?$/, (resp) ->
     game.askQuestion(resp)
 
-  robot.hear /^!skip/, (resp) ->
+  robot.hear /^!skip$/, (resp) ->
     game.skipQuestion(resp)
 
   robot.hear /^!a(nswer)? (.*)/, (resp) ->
@@ -195,8 +195,8 @@ module.exports = (robot) ->
   robot.hear /^!score (.*)/i, (resp) ->
     game.checkScore(resp, resp.match[1])
 
-  robot.hear /^!t (top|bottom)/i, (resp) ->
+  robot.hear /^!t (top|bottom)$/i, (resp) ->
     game.leaderBoard(resp, resp.match[1])
 
-  robot.hear /^!h(int)?/i, (resp) ->
+  robot.hear /^!h(int)?$/i, (resp) ->
     game.hint(resp)
