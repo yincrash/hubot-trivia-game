@@ -23,7 +23,8 @@
 
   "dependencies": {
     "coffee-script": "~1.6",
-    "cheerio": "0.17.0"
+    "cheerio": "0.17.0",
+    "entities": "1.1.1"
   },
 
   "devDependencies": {
