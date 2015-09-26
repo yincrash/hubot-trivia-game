@@ -4,37 +4,31 @@
   "version": "1.0.5",
   "author": "Michael Yin <mikeyin@mikeyin.org>",
   "license": "MIT",
-
   "keywords": [
     "hubot",
     "hubot-scripts",
     "trivia",
     "game"
   ],
-
   "repository": {
     "type": "git",
     "url": "git://github.com/yincrash/hubot-trivia-game.git"
   },
-
   "bugs": {
     "url": "https://github.com/yincrash/hubot-trivia-game/issues"
   },
-
   "dependencies": {
+    "cheerio": "0.17.0",
     "coffee-script": "~1.6",
-    "cheerio": "0.17.0"
+    "fuzzyset.js": "0.0.1"
   },
-
   "devDependencies": {
     "mocha": "*",
     "chai": "*",
     "sinon-chai": "*",
     "sinon": "*"
   },
-
   "main": "index.coffee",
-
   "scripts": {
     "test": "script/test"
   }
