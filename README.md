@@ -8,6 +8,8 @@ A trivia bot.
 *   **!skip** - skip the current question
 *   **!answer <answer>** or **!a <answer>** - provide an answer
 *   **!score <player>** - check the score of the player
+*   **!scores** or **!score all** - check the score of all players
+*   **!h** or **!hint** - take a hint
 
 ## Installation
 
