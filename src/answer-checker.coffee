@@ -11,8 +11,8 @@ goodConfidence = 0.65
 # this calls FuzzySet on every consecutive combination of words from the guess
 # by https://github.com/natgaertner
 module.exports = (guess, answer) ->
-  result = keymax(pseudoPowerSet(answer.split(' ')), (element) ->
-    match = FuzzySet.get(element)
+  result = keymax(pseudoPowerSet(guess.split(' ')), (element) ->
+    match = FuzzySet([answer]).get(element)
     if match == null
       0
     else
@@ -40,7 +40,7 @@ pseudoPowerSet = (words) ->
   set = []
   len = 1
   while len <= words.length
-        start = 0
+    start = 0
     while start <= words.length - len
       set.push words.slice(start, start + len).join(' ')
       start++
