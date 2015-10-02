@@ -27,8 +27,7 @@
 Fs = require 'fs'
 Path = require 'path'
 Cheerio = require 'cheerio'
-FuzzySet = require 'fuzzyset.js'
-
+AnswerChecker = require './answer-checker'
 
 class Game
   @currentQ = null
@@ -74,12 +73,7 @@ class Game
       checkGuess = checkGuess.replace /[\\'"\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
       checkAnswer = @currentQ.validAnswer.toLowerCase().replace /[\\'"\.,-\/#!$%\^&\*;:{}=\-_`~()\s]/g, ""
       checkAnswer = checkAnswer.replace /^(a(n?)|the)/g, ""
-      fuzzyAnswer = FuzzySet([checkAnswer])
-      result = fuzzyAnswer.get(checkGuess)
-      confidence = 0
-      if result and result[0] and result[0][0]
-        confidence = result[0][0]
-      if confidence > 0.5
+      if AnswerChecker(checkGuess, checkAnswer)
         resp.reply "YOU ARE CORRECT!!1!!!111!! The answer is #{@currentQ.answer}"
         name = resp.envelope.user.name.toLowerCase().trim()
         value = @currentQ.value.replace /[^0-9.-]+/g, ""
@@ -108,9 +102,11 @@ class Game
 
   checkScore: (resp, name) ->
     if name == "all"
+      scores = ""
       for user in @robot.brain.usersForFuzzyName ""
         user.triviaScore = user.triviaScore or 0
-        resp.send "#{user.name} - $#{user.triviaScore}"
+        scores += "#{user.name} - $#{user.triviaScore}\n"
+        resp.send scores
     else
       user = @robot.brain.userForName name
       unless user
