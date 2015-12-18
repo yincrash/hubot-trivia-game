@@ -1,7 +1,7 @@
 {
   "name": "hubot-trivia-game",
   "description": "yet another trivia bot for Hubot",
-  "version": "1.0.6-bear.6",
+  "version": "1.0.7",
   "author": "Michael Yin <mikeyin@mikeyin.org>",
   "license": "MIT",
   "keywords": [
