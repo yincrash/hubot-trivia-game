@@ -106,7 +106,7 @@ class Game
       for user in @robot.brain.usersForFuzzyName ""
         user.triviaScore = user.triviaScore or 0
         scores += "#{user.name} - $#{user.triviaScore}\n"
-        resp.send scores
+      resp.send scores
     else
       user = @robot.brain.userForName name
       unless user
