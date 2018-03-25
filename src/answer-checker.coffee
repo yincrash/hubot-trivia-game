@@ -4,9 +4,9 @@
 # @module answer-checker
 
 FuzzySet = require 'fuzzyset.js'
-  
+
 goodConfidence = 0.65
-  
+
 # check if the guess is valid for the given answer
 # this calls FuzzySet on every consecutive combination of words from the guess
 # by https://github.com/natgaertner
@@ -19,13 +19,12 @@ module.exports = (guess, answer) ->
       match[0][0] # return the confidence level
   )
   return result.maxScore >= goodConfidence
-  
+
 # return element and keyfunc result for the element for which keyfunc returns the highest value
 keymax = (set, keyfunc) ->
   maxElement = null
   maxScore = 0
-  for idx of set
-    element = set[idx]
+  for element in set
     score = keyfunc(element)
     if score > maxScore
       maxElement = element
@@ -34,7 +33,7 @@ keymax = (set, keyfunc) ->
     maxElement: maxElement
     maxScore: maxScore
   }
-  
+
 # ['thin', 'crust', 'pizza'] => ['thin', 'crust', 'pizza', 'thin crust', 'crust pizza', 'thin crust pizza']
 pseudoPowerSet = (words) ->
   set = []
