@@ -1,9 +1,10 @@
 {
   "name": "hubot-trivia-game",
   "description": "yet another trivia bot for Hubot",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "author": "Michael Yin <mikeyin@mikeyin.org>",
   "license": "MIT",
+  "type": "module",
   "keywords": [
     "hubot",
     "hubot-scripts",
@@ -18,18 +19,25 @@
     "url": "https://github.com/yincrash/hubot-trivia-game/issues"
   },
   "dependencies": {
-    "cheerio": "0.17.0",
-    "coffee-script": "~1.6",
-    "fuzzyset.js": "0.0.1"
+    "@types/fuzzyset": "^1.0.7",
+    "@types/hubot": "^3.3.7",
+    "cheerio": "^1.0.0-rc.12",
+    "fuzzyset": "^1.0.7",
+    "hubot": ">=11.0.0"
   },
   "devDependencies": {
-    "mocha": "*",
-    "chai": "*",
-    "sinon-chai": "*",
-    "sinon": "*"
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5"
   },
-  "main": "index.coffee",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
   "scripts": {
-    "test": "script/test"
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }
