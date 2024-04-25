@@ -70,16 +70,17 @@ class Game {
 
     public skipQuestion(resp: Response) {
         if (this.currentQ) {
-            if (this.skipRequests.length < (MIN_SKIP_REQUESTS -1)) {
-                let requestor = resp.envelope.user.id;
-                if (this.skipRequests.indexOf(requestor) === -1) this.skipRequests.push(requestor)
+            let requestor = resp.envelope.user.id;
+            if (this.skipRequests.indexOf(requestor) === -1) this.skipRequests.push(requestor)
+            if (this.skipRequests.length < MIN_SKIP_REQUESTS) {
                 return resp.send(`${this.skipRequests.length} of ${MIN_SKIP_REQUESTS} required unique skip requests received.` )
+            } else {
+                resp.send("The answer is " + this.currentQ.answer + ".");
+                this.currentQ = undefined;
+                this.skipRequests = [];
+                this.hintLength = 0;
+                return this.askQuestion(resp);
             }
-            resp.send("The answer is " + this.currentQ.answer + ".");
-            this.currentQ = undefined;
-            this.skipRequests = [];
-            this.hintLength = 0;
-            return this.askQuestion(resp);
         } else {
             return resp.send("There is no active question!");
         }
