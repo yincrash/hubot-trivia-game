@@ -35,9 +35,11 @@ import AnswerChecker from "./answer-checker.js";
 import { Response, Robot, User } from "hubot";
 
 const triviaScoreKey = "triviaScore";
+const MIN_SKIP_REQUESTS = 2;
 
 class Game {
     currentQ?: Question;
+    skipRequests: Array<string> = [];
     validAnswer?: string;
     hintLength = 0;
     questions: Array<Question> = [];
@@ -54,6 +56,7 @@ class Game {
             index = Math.floor(Math.random() * this.questions.length);
             this.currentQ = this.questions[index];
             this.hintLength = 1;
+            this.skipRequests = [];
             this.robot.logger.debug("Answer is " + this.currentQ.answer);
             // remove optional portions of answer that are in parens
             this.validAnswer = this.currentQ.answer.replace(/\(.*\)/, "");
@@ -67,8 +70,14 @@ class Game {
 
     public skipQuestion(resp: Response) {
         if (this.currentQ) {
+            if (this.skipRequests.length < (MIN_SKIP_REQUESTS -1)) {
+                let requestor = resp.envelope.user.id;
+                if (this.skipRequests.indexOf(requestor) === -1) this.skipRequests.push(requestor)
+                return resp.send(`${this.skipRequests.length} of ${MIN_SKIP_REQUESTS} required unique skip requests received.` )
+            }
             resp.send("The answer is " + this.currentQ.answer + ".");
             this.currentQ = undefined;
+            this.skipRequests = [];
             this.hintLength = 0;
             return this.askQuestion(resp);
         } else {
