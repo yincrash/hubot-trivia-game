@@ -33,9 +33,10 @@ import Path from "path";
 import Cheerio from "cheerio";
 import AnswerChecker from "./answer-checker.js";
 import { Response, Robot, User } from "hubot";
+import "dotenv/config";
 
 const triviaScoreKey = "triviaScore";
-const MIN_SKIP_REQUESTS = 2;
+const minSkipRequests = process.env.MIN_SKIP_REQUESTS;
 
 class Game {
     currentQ?: Question;
@@ -72,8 +73,8 @@ class Game {
         if (this.currentQ) {
             let requestor = resp.envelope.user.id;
             if (this.skipRequests.indexOf(requestor) === -1) this.skipRequests.push(requestor)
-            if (this.skipRequests.length < MIN_SKIP_REQUESTS) {
-                return resp.send(`${this.skipRequests.length} of ${MIN_SKIP_REQUESTS} required unique skip requests received.` )
+            if (minSkipRequests && this.skipRequests.length < minSkipRequests) {
+                return resp.send(`${this.skipRequests.length} of ${minSkipRequests} required unique skip requests received.` )
             } else {
                 resp.send("The answer is " + this.currentQ.answer + ".");
                 this.currentQ = undefined;
