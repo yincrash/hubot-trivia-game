@@ -33,3 +33,14 @@ The question database is a file containing a JSON array of questions with the fo
 One example of such a question set can be found [here](http://www.reddit.com/r/datasets/comments/1uyd0t/200000_jeopardy_questions_in_a_json_file).
 
 The file needs to be stored in `<hubot_root>/res/questions.json`
+
+## Settings
+
+Some settings can be set via `.env` config for your Hubot instance.
+
+```
+# The minimum unique skip requests required before the question is actually skipped.
+# This prevents any single person from continually skipping questions alone.
+# By default, no minimum.
+MIN_SKIP_REQUESTS=0
+```
