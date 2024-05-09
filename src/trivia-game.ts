@@ -36,7 +36,7 @@ import { Response, Robot, User } from "hubot";
 import "dotenv/config";
 
 const triviaScoreKey = "triviaScore";
-const minSkipRequests = process.env.MIN_SKIP_REQUESTS;
+const minSkipRequests = process.env.MIN_SKIP_REQUESTS ? +process.env.MIN_SKIP_REQUESTS : null;
 
 class Game {
     currentQ?: Question;
